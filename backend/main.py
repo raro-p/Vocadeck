@@ -9,6 +9,7 @@ import json
 
 from database import get_db, engine
 from models import Base, Word, StudySession, DailyStats, Notebook
+from config import settings
 
 # データベーステーブルを作成
 Base.metadata.create_all(bind=engine)
@@ -18,7 +19,10 @@ app = FastAPI()
 # CORS設定（フロントエンドからのアクセスを許可）
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        settings.FRONTEND_URL,
+        "http://localhost:3000",  # 開発用
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

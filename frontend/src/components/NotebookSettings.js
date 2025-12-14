@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 const COLOR_PRESETS = [
   { id: 'blue', name: '青', front: 'linear-gradient(135deg, #4A90E2 0%, #2196F3 100%)', back: 'linear-gradient(135deg, #64B5F6 0%, #90CAF9 100%)' },
@@ -37,7 +38,7 @@ function NotebookSettings({ notebookId, onSettingsChange }) {
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch(`/api/notebook-settings?notebook_id=${notebookId}`);
+      const response = await fetch(`${API_URL}/api/notebook-settings?notebook_id=${notebookId}`);
       if (response.ok) {
         const data = await response.json();
         setSettings(data);
@@ -63,7 +64,7 @@ function NotebookSettings({ notebookId, onSettingsChange }) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch(`/api/notebook-settings?notebook_id=${notebookId}`, {
+      const response = await fetch(`${API_URL}/api/notebook-settings?notebook_id=${notebookId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ function NotebookSettings({ notebookId, onSettingsChange }) {
     
     setResetting(true);
     try {
-      const response = await fetch(`/api/notebooks/${notebookId}/reset-progress`, {
+      const response = await fetch(`${API_URL}/api/notebooks/${notebookId}/reset-progress`, {
         method: 'POST',
       });
       if (response.ok) {

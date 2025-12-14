@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 function NotebookSidebar({ notebooks, selectedNotebookId, onSelectNotebook, onEditNotebook, onDeleteNotebook, onCreateNotebook }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,7 +25,7 @@ function NotebookSidebar({ notebooks, selectedNotebookId, onSelectNotebook, onEd
 
   const performSearch = async (query) => {
     try {
-      const response = await fetch(`/api/words/search?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`${API_URL}/api/words/search?q=${encodeURIComponent(query)}`);
       if (response.ok) {
         const data = await response.json();
         setSearchResults(data);

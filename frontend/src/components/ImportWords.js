@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 function ImportWords({ notebookId, onImportComplete }) {
   const [text, setText] = useState('');
@@ -72,7 +73,7 @@ function ImportWords({ notebookId, onImportComplete }) {
 
     setImporting(true);
     try {
-      const response = await fetch('/api/words/import', {
+      const response = await fetch(`${API_URL}/api/words/import`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

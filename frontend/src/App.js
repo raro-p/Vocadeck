@@ -12,10 +12,8 @@ import NotebookSidebar from './components/NotebookSidebar';
 import NotebookForm from './components/NotebookForm';
 import NotebookSettings from './components/NotebookSettings';
 import ImportWords from './components/ImportWords';
+import { API_URL } from './config';
 import './App.css';
-
-const API_URL = '/api/words';
-const NOTEBOOKS_API_URL = '/api/notebooks';
 
 function App() {
   const [words, setWords] = useState([]);
@@ -48,7 +46,7 @@ function App() {
   // 単語帳一覧を取得
   const fetchNotebooks = async () => {
     try {
-      const response = await fetch(NOTEBOOKS_API_URL);
+      const response = await fetch(`${API_URL}/api/notebooks`);
       if (!response.ok) {
         throw new Error(`サーバーエラー: ${response.status}`);
       }
@@ -72,7 +70,7 @@ function App() {
       return;
     }
     try {
-      const response = await fetch(`${API_URL}?notebook_id=${selectedNotebookId}`);
+      const response = await fetch(`${API_URL}/api/words?notebook_id=${selectedNotebookId}`);
       if (!response.ok) {
         throw new Error(`サーバーエラー: ${response.status}`);
       }
@@ -95,7 +93,7 @@ function App() {
       setLoading(true);
       fetchWords();
       // 設定を取得
-      fetch(`/api/notebook-settings?notebook_id=${selectedNotebookId}`)
+      fetch(`${API_URL}/api/notebook-settings?notebook_id=${selectedNotebookId}`)
         .then(res => res.json())
         .then(data => setNotebookSettings(data))
         .catch(err => console.error('設定の取得に失敗しました:', err));
@@ -153,7 +151,7 @@ function App() {
       return;
     }
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/api/words`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -175,7 +173,7 @@ function App() {
   // 単語を更新
   const handleUpdateWord = async (wordData) => {
     try {
-      const response = await fetch(`${API_URL}/${editingWord.id}`, {
+      const response = await fetch(`${API_URL}/api/words/${editingWord.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -200,7 +198,7 @@ function App() {
       return;
     }
     try {
-      const response = await fetch(`${API_URL}/${wordId}`, {
+      const response = await fetch(`${API_URL}/api/words/${wordId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
@@ -267,7 +265,7 @@ function App() {
 
   const handleProgressUpdate = async (wordId, correct, mastered = null) => {
     try {
-      const response = await fetch(`${API_URL}/${wordId}/progress`, {
+      const response = await fetch(`${API_URL}/api/words/${wordId}/progress`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -339,7 +337,7 @@ function App() {
   // 単語帳のCRUD操作
   const handleCreateNotebook = async (notebookData) => {
     try {
-      const response = await fetch(NOTEBOOKS_API_URL, {
+      const response = await fetch(`${API_URL}/api/notebooks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -362,7 +360,7 @@ function App() {
 
   const handleUpdateNotebook = async (notebookData) => {
     try {
-      const response = await fetch(`${NOTEBOOKS_API_URL}/${editingNotebook.id}`, {
+      const response = await fetch(`${API_URL}/api/notebooks/${editingNotebook.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -384,7 +382,7 @@ function App() {
 
   const handleDeleteNotebook = async (notebookId) => {
     try {
-      const response = await fetch(`${NOTEBOOKS_API_URL}/${notebookId}`, {
+      const response = await fetch(`${API_URL}/api/notebooks/${notebookId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
