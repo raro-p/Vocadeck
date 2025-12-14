@@ -5,7 +5,7 @@ import ProgressButtons from './ProgressButtons';
 
 const API_URL = '/api/words';
 
-function ReviewMode({ notebookId, onProgressUpdate }) {
+function ReviewMode({ notebookId, notebookSettings, onProgressUpdate }) {
   const [wrongWords, setWrongWords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -202,6 +202,7 @@ function ReviewMode({ notebookId, onProgressUpdate }) {
             word={currentCard}
             direction={cardDirection}
             onFlip={handleCardFlip}
+            colorPreset={notebookSettings?.card_colors?.front || 'blue'}
           />
           <CardControls
             currentIndex={currentCardIndex}

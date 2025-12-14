@@ -10,6 +10,8 @@ import SessionTracker from './components/SessionTracker';
 import StudyHistory from './components/StudyHistory';
 import NotebookSidebar from './components/NotebookSidebar';
 import NotebookForm from './components/NotebookForm';
+import NotebookSettings from './components/NotebookSettings';
+import ImportWords from './components/ImportWords';
 import './App.css';
 
 const API_URL = '/api/words';
@@ -26,6 +28,7 @@ function App() {
   const [selectedNotebookId, setSelectedNotebookId] = useState(null);
   const [editingNotebook, setEditingNotebook] = useState(null);
   const [showNotebookForm, setShowNotebookForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   
   // カード機能の状態
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -38,6 +41,9 @@ function App() {
   const [sessionCorrectCount, setSessionCorrectCount] = useState(0);
   const [sessionWrongCount, setSessionWrongCount] = useState(0);
   const [sessionWordsStudied, setSessionWordsStudied] = useState(0);
+  
+  // 設定の状態
+  const [notebookSettings, setNotebookSettings] = useState(null);
 
   // 単語帳一覧を取得
   const fetchNotebooks = async () => {
@@ -88,22 +94,45 @@ function App() {
     if (selectedNotebookId) {
       setLoading(true);
       fetchWords();
+      // 設定を取得
+      fetch(`/api/notebook-settings?notebook_id=${selectedNotebookId}`)
+        .then(res => res.json())
+        .then(data => setNotebookSettings(data))
+        .catch(err => console.error('設定の取得に失敗しました:', err));
     }
   }, [selectedNotebookId]);
+
+  // 設定に基づいてカードの方向と順番を設定
+  useEffect(() => {
+    if (notebookSettings) {
+      if (notebookSettings.default_direction) {
+        setCardDirection(notebookSettings.default_direction);
+      }
+      if (notebookSettings.default_order) {
+        setCardOrder(notebookSettings.default_order);
+      }
+    }
+  }, [notebookSettings]);
 
   // カード用の単語リストを更新（初回読み込み時と順序変更時のみ）
   useEffect(() => {
     if (words.length > 0) {
+      // 設定に基づいてマスターした単語を除外
+      let filteredWords = words;
+      if (notebookSettings?.exclude_mastered) {
+        filteredWords = words.filter(word => !word.mastered);
+      }
+      
       if (cardOrder === 'random') {
-        const shuffled = [...words].sort(() => Math.random() - 0.5);
+        const shuffled = [...filteredWords].sort(() => Math.random() - 0.5);
         setShuffledWords(shuffled);
       } else {
-        setShuffledWords([...words]);
+        setShuffledWords([...filteredWords]);
       }
       setCurrentCardIndex(0);
       setCardFlipped(false);
     }
-  }, [cardOrder]); // wordsの変更ではリセットしない
+  }, [cardOrder, words, notebookSettings?.exclude_mastered]); // wordsの変更ではリセットしない
 
   // 初回読み込み時のみ
   useEffect(() => {
@@ -442,6 +471,12 @@ function App() {
           >
             学習履歴
           </button>
+          <button
+            className={`tab ${activeTab === 'settings' ? 'active' : ''}`}
+            onClick={() => setActiveTab('settings')}
+          >
+            設定
+          </button>
         </div>
 
         {activeTab === 'manage' && (
@@ -466,6 +501,25 @@ function App() {
                     onCancel={handleCancelEdit}
                   />
                 </section>
+                
+                <section className="import-section">
+                  <button
+                    className="btn-toggle-import"
+                    onClick={() => setShowImport(!showImport)}
+                  >
+                    {showImport ? '▼ インポートを閉じる' : '▶ 一括インポート'}
+                  </button>
+                  {showImport && (
+                    <ImportWords
+                      notebookId={selectedNotebookId}
+                      onImportComplete={() => {
+                        fetchWords();
+                        setShowImport(false);
+                      }}
+                    />
+                  )}
+                </section>
+                
                 <section className="list-section">
                   <h2>単語一覧</h2>
                   {loading ? (
@@ -516,6 +570,7 @@ function App() {
                       word={currentCard}
                       direction={cardDirection}
                       onFlip={handleCardFlip}
+                      colorPreset={notebookSettings?.card_colors?.front || 'blue'}
                     />
                     <CardControls
                       currentIndex={currentCardIndex}
@@ -567,6 +622,15 @@ function App() {
         {activeTab === 'history' && (
           <section className="history-section">
             <StudyHistory />
+          </section>
+        )}
+
+        {activeTab === 'settings' && (
+          <section className="settings-section">
+            <NotebookSettings
+              notebookId={selectedNotebookId}
+              onSettingsChange={setNotebookSettings}
+            />
           </section>
         )}
         </main>

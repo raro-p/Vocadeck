@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, Float, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Float, Date, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from datetime import datetime, date
 from database import Base
@@ -9,6 +9,15 @@ class Notebook(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     created_at = Column(DateTime, default=datetime.now)
+    settings = Column(JSON, default=lambda: {
+        "exclude_mastered": False,
+        "default_direction": "word-to-meaning",
+        "default_order": "sequential",
+        "card_colors": {
+            "front": "blue",
+            "back": "light-blue"
+        }
+    })
     
     # リレーションシップ
     words = relationship("Word", back_populates="notebook", cascade="all, delete-orphan")
