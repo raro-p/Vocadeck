@@ -19,8 +19,11 @@ app = FastAPI()
 # CORS設定（フロントエンドからのアクセスを許可）
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 一時的に全てのオリジンを許可（デバッグ用）
-    allow_credentials=False,  # allow_origins=["*"] の場合はFalseにする必要がある
+    allow_origins=[
+        "https://vocadeck.vercel.app",  # Vercel本番環境
+        "http://localhost:3000",  # 開発用
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
