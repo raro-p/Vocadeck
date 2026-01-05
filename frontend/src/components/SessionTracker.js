@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_URL as BASE_API_URL } from '../config';
 
-const API_URL = '/api/sessions';
+const API_URL = `${BASE_API_URL}/api/sessions`;
 
 function SessionTracker({ correctCount, wrongCount, wordsStudied, onSessionEnd }) {
   const [isActive, setIsActive] = useState(false);

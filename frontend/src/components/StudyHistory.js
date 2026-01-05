@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import HistoryChart from './HistoryChart';
+import { API_URL as BASE_API_URL } from '../config';
 
-const API_URL = '/api/stats';
+const API_URL = `${BASE_API_URL}/api/stats`;
 
 function StudyHistory() {
   const [dailyStats, setDailyStats] = useState([]);

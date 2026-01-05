@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import FlashCard from './FlashCard';
 import CardControls from './CardControls';
 import ProgressButtons from './ProgressButtons';
+import { API_URL as BASE_API_URL } from '../config';
 
-const API_URL = '/api/words';
+const API_URL = `${BASE_API_URL}/api/words`;
 
 function ReviewMode({ notebookId, notebookSettings, onProgressUpdate }) {
   const [wrongWords, setWrongWords] = useState([]);
