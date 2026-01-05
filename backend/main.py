@@ -22,6 +22,7 @@ app.add_middleware(
     allow_origins=[
         settings.FRONTEND_URL,
         "http://localhost:3000",  # 開発用
+        "https://vocadeck.vercel.app",  # Vercel本番環境
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -32,6 +33,9 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     print("\n" + "="*50)
+    print("CORS設定:")
+    print(f"  FRONTEND_URL: {settings.FRONTEND_URL}")
+    print("="*50)
     print("登録されているエンドポイント:")
     for route in app.routes:
         if hasattr(route, 'path') and hasattr(route, 'methods'):
